@@ -27,11 +27,13 @@
 	    <scope>provided</scope>
 	</dependency>
     
-    <!-- https://mvnrepository.com/artifact/com.oracle.jdbc/ojdbc14 -->
+    <!-- libs폴더에 있는 jar파일 직접적용 -->
 <dependency>
     <groupId>com.oracle.jdbc</groupId>
     <artifactId>ojdbc14</artifactId>
     <version>10.2.0.1.0</version>
+    <scope>system</scope>
+    <systemPath>${basedir}/libs/ojdbc14.jar</systemPath>
 </dependency>
 
     <dependency>
