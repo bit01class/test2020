@@ -9,18 +9,19 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-public class JdbcTemplate {
+public class JdbcTemplate<T> {
 	DataSource dataSource;
 	
 	public JdbcTemplate(DataSource dataSource) {
 		this.dataSource=dataSource;
 	}
 
-	public List execute(String sql,RowMapper row) throws SQLException{
-		return execute(sql,row,new Object[]{});
+	public T executeOne(String sql,RowMapper<T> row,Object ... obj) throws SQLException{
+		return execute(sql, row, obj).get(0);
 	}
-	public List execute(String sql,RowMapper row,Object[] obj) throws SQLException{
-		List list=new ArrayList ();
+	
+	public List<T> execute(String sql,RowMapper<T> row,Object ... obj) throws SQLException{
+		List<T> list=new ArrayList<T>();
 		Connection conn=null;
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
@@ -32,8 +33,7 @@ public class JdbcTemplate {
 				pstmt.setObject(i+1, obj[i]);
 			}
 			rs=pstmt.executeQuery();
-			while(rs.next()){
-				
+			while(rs.next()){	
 				list.add(row.mapper(rs));
 			}
 		}finally{
@@ -44,7 +44,7 @@ public class JdbcTemplate {
 	
 	
 	
-	public int update(String sql,Object[] obj) throws SQLException{
+	public int update(String sql,Object ... obj) throws SQLException{
 		Connection conn=null;
 		PreparedStatement pstmt=null;
 		try{

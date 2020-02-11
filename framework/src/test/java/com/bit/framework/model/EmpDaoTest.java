@@ -25,7 +25,15 @@ public class EmpDaoTest {
 	}
 	
 	@Test
-	public void test2() throws SQLException {
+	public void test2() throws SQLException{
+		EmpDao dao=new EmpDao();
+		EmpVo bean = dao.selectOne(7369);
+		assertNotNull(bean);
+		assertEquals("SMITH", bean.getEname());
+	}
+	
+	@Test
+	public void test3() throws SQLException {
 		
 		EmpDao dao=new EmpDao();
 		EmpVo bean=new EmpVo();

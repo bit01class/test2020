@@ -18,6 +18,20 @@ import com.bit.framework.model.entity.EmpVo;
 
 public class EmpDao {
 	DataSource dataSource;
+	
+	RowMapper<EmpVo> row=new RowMapper<EmpVo>() {
+
+		@Override
+		public EmpVo mapper(ResultSet rs) throws SQLException {
+			EmpVo bean=new EmpVo();
+			bean.setEmpno(rs.getInt("empno"));
+			bean.setEname(rs.getString("ename"));
+			bean.setJob(rs.getString("job"));
+			bean.setSal(rs.getInt("sal"));
+			bean.setHiredate(rs.getDate("hiredate"));
+			return bean;
+		}
+	};
 
 	public EmpDao() throws SQLException{
 		String url="jdbc:oracle:thin:@localhost:1521:xe";
@@ -32,21 +46,15 @@ public class EmpDao {
 	
 	public List selectAll() throws SQLException{
 		String sql="select * from emp";
-		JdbcTemplate template =new JdbcTemplate(dataSource);
-		RowMapper row=new RowMapper() {
-			
-			@Override
-			public Object mapper(ResultSet rs) throws SQLException {
-				EmpVo bean=new EmpVo();
-				bean.setEmpno(rs.getInt("empno"));
-				bean.setEname(rs.getString("ename"));
-				bean.setJob(rs.getString("job"));
-				bean.setSal(rs.getInt("sal"));
-				bean.setHiredate(rs.getDate("hiredate"));
-				return bean;
-			}
-		};
+		JdbcTemplate<EmpVo> template =new JdbcTemplate<EmpVo>(dataSource);
+		
 		return template.execute(sql, row);
+	}
+	
+	public EmpVo selectOne(int empno) throws SQLException{
+		String sql="select * from emp where empno=?";
+		JdbcTemplate<EmpVo> template=new JdbcTemplate<EmpVo>(dataSource);
+		return template.executeOne(sql, row, empno);
 	}
 	
 	public int insertOne(EmpVo bean) throws SQLException{
@@ -54,9 +62,8 @@ public class EmpDao {
 		sql+=" values (?,?,?,sysdate,?)";
 		
 		JdbcTemplate template = new JdbcTemplate(dataSource);
-		return template.update(sql, new Object[]{
-				bean.getEmpno(),bean.getEname()
-				,bean.getJob(),bean.getSal()});
+		return template.update(sql, bean.getEmpno(),bean.getEname()
+				,bean.getJob(),bean.getSal());
 	}
 }
 
